@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   camera: {
     display: 'flex',
     alignSelf: 'center',
-    marginTop: 550
+    marginTop: 500
   },
   captureBtn: {
     width: 60,
