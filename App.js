@@ -10,6 +10,7 @@ import BottomTabNavigator from './navigation/BottomTabNavigator';
 import useLinking from './navigation/useLinking';
 
 const Stack = createStackNavigator();
+// const scoreState = { score: 20 };
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
