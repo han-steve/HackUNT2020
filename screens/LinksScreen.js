@@ -12,14 +12,13 @@ export default class LinksScreen extends React.Component {
   constructor(props) {
     super(props);
 
-
     this.state = {
       hasCameraPermission: null,
       type: Camera.Constants.Type.back,
       photo: null,
       photoId: '',
-      openCamera: true,
-      imageSource: 'https://via.placeholder.com/200'
+      openCamera: false,
+      imageSource: ''
     };
 
   }
@@ -62,7 +61,6 @@ export default class LinksScreen extends React.Component {
             colors={['#F53844', '#42378F']}
             style={styles.background}
           >
-            <Image source={{ uri: this.state.imageSource }} style={{ width: 200, height: 200 }} />
             <Text style={styles.title}>In Flight</Text>
             <TouchableOpacity onPress={this.openCamera}>
               <View style={styles.openCameraBtn}>
@@ -83,6 +81,9 @@ export default class LinksScreen extends React.Component {
                   </TouchableOpacity>
                 </View>
               </Camera>
+            }
+            {!this.state.openCamera &&
+              <Image source={{ uri: this.state.imageSource }} style={{ width: 200, height: 200 }} />
             }
           </LinearGradient>
 
