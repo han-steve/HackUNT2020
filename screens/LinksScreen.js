@@ -20,7 +20,8 @@ export default class LinksScreen extends React.Component {
       openCamera: false,
       imageSource: '',
       message: '',
-      base64: ''
+      base64: '',
+      score: 20
     };
 
   }
@@ -40,11 +41,15 @@ export default class LinksScreen extends React.Component {
       imageSource: data.uri,
       base64: data.base64
     });
-    let response = true; // api call
+
+    console.log(this.state.base64);
+    let response = this.makeRequest(this.state.base64); // api call
+    console.log("RESPONSE yuhYEET: " + JSON.stringify(response));
     if (response) {
-      this.setState({
-        message: "Congratulations, you are all set for the flight!"
-      })
+      this.setState(previousState => ({
+        message: "Congratulations, you are all set for the flight!",
+        score: previousState.score + 20
+      }))
     } else {
       this.setState({
         message: "Sorry, please try again."
@@ -56,6 +61,23 @@ export default class LinksScreen extends React.Component {
         });
       }, 2000)
     }
+  }
+
+  makeRequest = (base64) => {
+    return fetch("https://automl.googleapis.com/v1beta1/projects/936948942248/locations/us-central1/models/ICN1685802014031740928:predict", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ya29.c.KpQBvQeqIP9E2l-xf1fi63XRqvdgtE0vjG67IQjc-dt4SxsZJDQz6HDLF2XDcJDiV4ynB633SI_rY4JavTWV1sDxJ9OC6rvCYoQNIAH2CwATi-6tF5ifeVp1YJLOZ9roD_qH75gQMgEKk4eZuEMTghR6b8xEt_EV-oDZ93anXZZ8c6CuC7Z9jKd0_qKGyQ4U_ygRnVB9AA"
+      },
+      body: {
+        "payload": {
+          "image": {
+            "imageBytes": base64
+          }
+        }
+      }
+    }).then((response) => response.json());
   }
 
   openCamera = () => {
@@ -79,7 +101,11 @@ export default class LinksScreen extends React.Component {
             colors={['#F53844', '#42378F']}
             style={styles.background}
           >
-            <Text style={styles.title}>In Flight</Text>
+            <View style={styles.top}>
+              <Text style={styles.title}>In Flight</Text>
+              <Text style={styles.number}>{this.state.score}</Text>
+            </View>
+
             {!this.state.message ?
               <View style={{ flex: 1 }}>
                 {!this.state.openCamera &&
@@ -120,13 +146,25 @@ export default class LinksScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-
+  top: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
   title: {
     fontSize: 20,
     fontSize: 40,
     color: 'white',
     fontWeight: '800',
     marginBottom: 30
+  },
+  number: {
+    fontSize: 20,
+    fontSize: 40,
+    color: 'white',
+    fontWeight: '900',
+    marginBottom: 30,
+    fontStyle: 'italic'
   },
   background: {
     flex: 1,
