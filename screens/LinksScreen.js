@@ -41,11 +41,8 @@ export default class LinksScreen extends React.Component {
       imageSource: data.uri,
       base64: data.base64
     });
-
-    console.log(this.state.base64);
-    let response = this.makeRequest(this.state.base64); // api call
-    console.log("RESPONSE yuhYEET: " + JSON.stringify(response));
-    if (response) {
+    let response = await this.makeRequest(this.state.base64); // api call
+    if (response.displayName === "NotEmpty") {
       this.setState(previousState => ({
         message: "Congratulations, you are all set for the flight!",
         score: previousState.score + 20
@@ -63,20 +60,15 @@ export default class LinksScreen extends React.Component {
     }
   }
 
-  makeRequest = (base64) => {
-    return fetch("https://automl.googleapis.com/v1beta1/projects/936948942248/locations/us-central1/models/ICN1685802014031740928:predict", {
+  makeRequest = async (base64) => {
+    return fetch("http://16dfc648.ngrok.io", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer ya29.c.KpQBvQeqIP9E2l-xf1fi63XRqvdgtE0vjG67IQjc-dt4SxsZJDQz6HDLF2XDcJDiV4ynB633SI_rY4JavTWV1sDxJ9OC6rvCYoQNIAH2CwATi-6tF5ifeVp1YJLOZ9roD_qH75gQMgEKk4eZuEMTghR6b8xEt_EV-oDZ93anXZZ8c6CuC7Z9jKd0_qKGyQ4U_ygRnVB9AA"
       },
-      body: {
-        "payload": {
-          "image": {
-            "imageBytes": base64
-          }
-        }
-      }
+      body: JSON.stringify({
+        base64: this.state.base64
+      })
     }).then((response) => response.json());
   }
 
@@ -108,6 +100,9 @@ export default class LinksScreen extends React.Component {
 
             {!this.state.message ?
               <View style={{ flex: 1 }}>
+                {!this.state.openCamera && (
+                  <Text style={styles.text}>Take picture of your personal item placed under your seat to earn 20 points.</Text>
+                )}
                 {!this.state.openCamera &&
                   <TouchableOpacity onPress={this.openCamera}>
                     <View style={styles.openCameraBtn}>
@@ -206,7 +201,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
-    fontSize: 20,
-    fontWeight: '800'
+    fontSize: 30,
+    fontWeight: '800',
+    marginBottom: 20
   }
 });

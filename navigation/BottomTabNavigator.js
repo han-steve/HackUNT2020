@@ -16,7 +16,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         component={CheckIn}
         options={{
           title: 'Check In',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-checkbox-outline" />,
         }}
       />
       <BottomTab.Screen
@@ -24,7 +24,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         component={InFlight}
         options={{
           title: 'In Flight',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="ios-airplane" />,
         }}
       />
     </BottomTab.Navigator>
