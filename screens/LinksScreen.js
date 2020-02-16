@@ -18,7 +18,9 @@ export default class LinksScreen extends React.Component {
       photo: null,
       photoId: '',
       openCamera: false,
-      imageSource: ''
+      imageSource: '',
+      message: '',
+      base64: ''
     };
 
   }
@@ -30,14 +32,30 @@ export default class LinksScreen extends React.Component {
   }
 
   takePicture = async () => {
-    this.cameraRef.current.takePictureAsync({ skipProcessing: true }).then((data) => {
+    let data = await this.cameraRef.current.takePictureAsync({ skipProcessing: true, base64: true });
+    this.setState({
+      //takeImageText: "PICTURE TAKEN",
+      photo: data.uri,
+      openCamera: false,
+      imageSource: data.uri,
+      base64: data.base64
+    });
+    let response = true; // api call
+    if (response) {
       this.setState({
-        //takeImageText: "PICTURE TAKEN",
-        photo: data.uri,
-        openCamera: false,
-        imageSource: data.uri
+        message: "Congratulations, you are all set for the flight!"
+      })
+    } else {
+      this.setState({
+        message: "Sorry, please try again."
       });
-    })
+      setTimeout(() => {
+        this.setState({
+          message: '',
+          openCamera: true
+        });
+      }, 2000)
+    }
   }
 
   openCamera = () => {
@@ -62,28 +80,36 @@ export default class LinksScreen extends React.Component {
             style={styles.background}
           >
             <Text style={styles.title}>In Flight</Text>
-            <TouchableOpacity onPress={this.openCamera}>
-              <View style={styles.openCameraBtn}>
-                <Text>Take a Picture</Text>
-              </View>
-            </TouchableOpacity>
-            {this.state.openCamera &&
-              <Camera style={{ flex: 1 }} ref={this.cameraRef}>
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: 'transparent',
-                    flexDirection: 'row',
-                  }}>
-                  <TouchableOpacity
-                    onPress={this.takePicture}>
-                    <View style={styles.captureBtn}></View>
+            {!this.state.message ?
+              <View style={{ flex: 1 }}>
+                {!this.state.openCamera &&
+                  <TouchableOpacity onPress={this.openCamera}>
+                    <View style={styles.openCameraBtn}>
+                      <Text style={styles.openCameraText}>Take a Picture</Text>
+                    </View>
                   </TouchableOpacity>
-                </View>
-              </Camera>
-            }
-            {!this.state.openCamera &&
-              <Image source={{ uri: this.state.imageSource }} style={{ width: 200, height: 200 }} />
+                }
+                {this.state.openCamera &&
+                  <Camera style={{ flex: 1, borderRadius: 50, marginBottom: 20 }} ref={this.cameraRef}>
+                    <View
+                      style={{
+                        flex: 1,
+                        backgroundColor: 'transparent',
+                        flexDirection: 'column',
+                      }}>
+                      <TouchableOpacity
+                        onPress={this.takePicture} style={styles.camera}>
+                        <View style={styles.captureBtn}></View>
+                      </TouchableOpacity>
+                    </View>
+                  </Camera>
+                }
+                {!this.state.openCamera &&
+                  <Image source={{ uri: this.state.imageSource }} style={styles.image} />
+                }
+              </View>
+              :
+              <Text style={styles.text}>{this.state.message}</Text>
             }
           </LinearGradient>
 
@@ -99,13 +125,19 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontSize: 40,
     color: 'white',
-    fontWeight: '800'
+    fontWeight: '800',
+    marginBottom: 30
   },
   background: {
     flex: 1,
     paddingLeft: 50,
     paddingRight: 50,
-    paddingTop: 70
+    paddingTop: 70,
+  },
+  camera: {
+    display: 'flex',
+    alignSelf: 'center',
+    marginTop: 550
   },
   captureBtn: {
     width: 60,
@@ -115,8 +147,28 @@ const styles = StyleSheet.create({
     borderColor: "#FFFFFF",
   },
   openCameraBtn: {
-    width: 200,
+    width: 300,
     height: 60,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    borderRadius: 60,
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  openCameraText: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#F53844',
+    alignSelf: 'center',
+  },
+  image: {
+    flex: 1,
+    marginTop: 20,
+    marginBottom: 20,
+    borderRadius: 50
+  },
+  text: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: '800'
   }
 });
