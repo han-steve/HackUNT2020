@@ -13,11 +13,17 @@ export default class LinksScreen extends React.Component {
     super(props);
 
     this.state = {
-      competitors: [{ name: "Jordan", score: 50 }, { name: "John", score: 40 }, { name: "Spencer", score: 40 }, { name: "You", score: 40 }, { name: "Andrew", score: 30 }, { name: "Josh", score: 10 }],
+      competitors: [{ name: "Andrew", score: 30 }, { name: "Gordon", score: 50 }, { name: "John", score: 40 }, { name: "Josh", score: 10 }, { name: "Spencer", score: 40 }],
       score: 20
     };
 
   }
+
+  update = () => {
+    this.state.competitors.push({ name: "You", score: this.state.score });
+    this.state.competitors.sort((a, b) => b > a ? 1 : -1);
+  }
+
 
   render() {
     return (
@@ -29,18 +35,14 @@ export default class LinksScreen extends React.Component {
           <View style={styles.top}>
             <Text style={styles.title}>Leaderboard</Text>
             {/* <Text style={styles.number}>{this.state.score}</Text> */}
-            <ScrollView >
-              {this.state.competitors.map((competitor, index) => {
-                return (
-                  <View key={index}>
-                    <View style={styles.competitor}>
-                      <Text style={styles.text}>{index + 1}</Text>
-                      <Text style={styles.text}>{competitor.name}</Text>
-                      <Text style={styles.text}>{competitor.score}</Text>
-                    </View>
-                  </View>
-                )
+            <ScrollView>
+              {this.state.competitors.map(function (competitor) {
+                <View class="competitor">
+                  <Text>{competitor.name}</Text>
+                  <Text>{competitor.score}</Text>
+                </View>
               })}
+              }
             </ScrollView>
           </View>
 
@@ -54,6 +56,7 @@ export default class LinksScreen extends React.Component {
 const styles = StyleSheet.create({
   top: {
     display: 'flex',
+    flexDirection: 'row',
     justifyContent: 'space-between'
   },
   title: {
@@ -110,16 +113,9 @@ const styles = StyleSheet.create({
     borderRadius: 50
   },
   text: {
-    color: '#DDDDDD',
+    color: 'white',
     fontSize: 30,
     fontWeight: '800',
     marginBottom: 20
-  },
-  competitor: {
-    fontWeight: '600',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingRight: 70,
   }
 });
